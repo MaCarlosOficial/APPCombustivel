@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { X, User, LogOut, Settings, Save, Star, Fuel } from 'lucide-react';
 import { UserPreferences, Bandeira, FuelType } from '../types';
 import { Button } from './Button';
-import { ApiService } from '../services/apiService';
 
 interface MenuDrawerProps {
   isOpen: boolean;
@@ -10,13 +9,12 @@ interface MenuDrawerProps {
   onLogout: () => void;
   userId: string;
   userEmail: string;
-  userToken: string;
   preferences: UserPreferences;
   onUpdatePreferences: (prefs: UserPreferences) => void;
 }
 
 export const MenuDrawer: React.FC<MenuDrawerProps> = ({ 
-  isOpen, onClose, onLogout, userEmail, userToken, preferences, onUpdatePreferences 
+  isOpen, onClose, onLogout, userEmail, preferences, onUpdatePreferences 
 }) => {
   const [activeTab, setActiveTab] = useState<'settings' | 'profile'>('settings');
   const [profileForm, setProfileForm] = useState({ email: userEmail, password: '' });

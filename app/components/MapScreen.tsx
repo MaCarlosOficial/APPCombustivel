@@ -121,7 +121,7 @@ export const MapScreen: React.FC<MapScreenProps> = ({
 
   // 1. Filtrar os postos para exibição dos Marcadores baseados no tipo favorito
   const filteredStationsForMarkers = allStations.filter(station => {
-    const isFavorite = favorites.includes(toString(station.id));
+    const isFavorite = favorites.includes(String(station.id));
     const matchesFuel = station.produto.toUpperCase() === preferences.tipoCombustivel.toUpperCase();
     const matchesBandeira = preferences.bandeiraFavorita === 'TODAS' || station.bandeira === preferences.bandeiraFavorita;
     const matchesShowFavorites = !preferences.showOnlyFavorites || isFavorite;
@@ -182,7 +182,7 @@ export const MapScreen: React.FC<MapScreenProps> = ({
         </Marker>
 
         {filteredStationsForMarkers.map(station => {
-          const isFavorite = favorites.includes(toString(station.id));
+          const isFavorite = favorites.includes(String(station.id));
           
           // Buscar todos os combustíveis desta mesma revenda para o Popup
           const otherFuels = allStations.filter(s => s.id_revenda === station.id_revenda);
@@ -205,7 +205,7 @@ export const MapScreen: React.FC<MapScreenProps> = ({
                     <button 
                       onClick={(e) => {
                         e.stopPropagation();
-                        onToggleFavorite(toString(station.id));
+                        onToggleFavorite(String(station.id));
                       }} 
                       className="p-1"
                     >

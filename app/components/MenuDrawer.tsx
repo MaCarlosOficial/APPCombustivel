@@ -21,7 +21,7 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
   const [activeTab, setActiveTab] = useState<'settings' | 'profile'>('settings');
   const [profileForm, setProfileForm] = useState({ email: userEmail, password: '' });
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
+  const [message] = useState<string | null>(null);
 
   if (!isOpen) {
     return null;

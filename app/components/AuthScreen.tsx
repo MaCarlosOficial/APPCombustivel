@@ -3,6 +3,7 @@ import { ApiService } from '../services/apiService';
 import { User } from '../types';
 import { Button } from './Button';
 import { Mail, Lock, ChevronRight } from 'lucide-react';
+// @ts-ignore: static image import without type declarations
 import iconeApp from '../assets/iconeApp.jpg';
 
 interface AuthScreenProps {

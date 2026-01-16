@@ -148,7 +148,7 @@ export const ApiService = {
       throw new Error(errorData.detail || 'Erro ao criar conta');
     }
 
-    const data = await response.json();
+    await response.json();
     
     // Após registrar com sucesso, fazemos o login para obter o token real
     return ApiService.login(email, password);

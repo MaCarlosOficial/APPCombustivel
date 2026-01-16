@@ -1,4 +1,4 @@
-import { GasStation } from '../types';
+import { GasStation, User } from '../types';
 
 // ==============================================================================
 // CONFIGURAÇÃO DAS APIs
@@ -25,7 +25,7 @@ export const ApiService = {
   // ---------------------------------------------------------------------------
   // LOGIN (OAuth2)
   // ---------------------------------------------------------------------------
-  login: async (emailOrUsername: string, password: string): Promise<string> => {
+  login: async (emailOrUsername: string, password: string): Promise<User> => {
     // Para OAuth2 (password grant), geralmente usamos x-www-form-urlencoded
     const body = new URLSearchParams();
     body.append('grant_type', 'password');

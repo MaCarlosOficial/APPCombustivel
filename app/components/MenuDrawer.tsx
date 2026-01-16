@@ -16,7 +16,7 @@ interface MenuDrawerProps {
 }
 
 export const MenuDrawer: React.FC<MenuDrawerProps> = ({ 
-  isOpen, onClose, onLogout, userId, userEmail, userToken, preferences, onUpdatePreferences 
+  isOpen, onClose, onLogout, userEmail, userToken, preferences, onUpdatePreferences 
 }) => {
   const [activeTab, setActiveTab] = useState<'settings' | 'profile'>('settings');
   const [profileForm, setProfileForm] = useState({ email: userEmail, password: '' });
@@ -35,17 +35,6 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
     }
     
     setLoading(true);
-    try {
-      await ApiService.updateProfile(profileForm.email, profileForm.password, userToken);
-      console.log('Perfil atualizado com sucesso!');
-      setMessage("Cadastro atualizado com sucesso!");
-      setTimeout(() => setMessage(null), 3000);
-    } catch (error) {
-      console.log('Erro ao atualizar perfil:', error);
-      setMessage("Erro ao atualizar.");
-    } finally {
-      setLoading(false);
-    }
   };
 
   return (

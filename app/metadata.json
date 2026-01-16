@@ -1,0 +1,7 @@
+{
+  "name": "Combustivel Barato",
+  "description": "Aplicativo de monitoramento de preços de combustíveis com geolocalização em tempo real.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

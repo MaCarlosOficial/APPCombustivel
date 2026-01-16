@@ -59,7 +59,6 @@ function App() {
             onLogout={handleLogout}
             userId={user.id}
             userEmail={user.email}
-            userToken={user.token}
             preferences={preferences}
             onUpdatePreferences={setPreferences}
           />

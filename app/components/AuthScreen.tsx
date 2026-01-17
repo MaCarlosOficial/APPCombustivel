@@ -40,12 +40,13 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
   return (
     <div className="min-h-full flex flex-col bg-white">
       {/* Hero Section */}
-      <div className="bg-blue-600 flex-1 flex flex-col items-center justify-center p-10 text-white rounded-b-[3rem] shadow-2xl z-10 relative overflow-hidden">
+      {/*<div className="bg-blue-600 flex-1 flex flex-col items-center justify-center p-10 text-white rounded-b-[3rem] shadow-2xl z-10 relative overflow-hidden">*/}
+      <div className="bg-blue-600 h-64 flex flex-col items-center justify-center p-10 text-white rounded-b-[3rem] shadow-2xl z-10 relative overflow-hidden">
         <div className="absolute inset-0 bg-blue-700/50 transform rotate-12 scale-150 rounded-[3rem] -z-10 translate-y-20"></div>
-        <div className="bg-white/20 p-4 rounded-full mb-6 backdrop-blur-sm">
-          <img src={iconeApp} alt="Ícone do app" className="w-12 h-12 object-cover rounded-full" />
+        <div className="bg-white/20 p-6 rounded-full mb-4 backdrop-blur-sm">
+          <img src={iconeApp} alt="Ícone do app" className="w-20 h-20 object-cover rounded-full" />
         </div>
-        <h1 className="text-3xl font-bold mb-2">Combustível Barato</h1>
+        <h1 className="text-3xl font-bold mb-1">Combustível Barato</h1>
         <p className="text-blue-100 text-center">Encontre o melhor preço de combustível ao seu redor.</p>
       </div>
 

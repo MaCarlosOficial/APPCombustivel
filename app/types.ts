@@ -1,7 +1,9 @@
 export interface User {
-  id: string;
+  userID: bigint;
   email: string;
   token: string;
+  userName: string;
+  userLogin: string;
 }
 
 export enum Bandeira {

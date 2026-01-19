@@ -1,25 +1,29 @@
 import React, { useState } from 'react';
 import { X, User, LogOut, Settings, Save, Star, Fuel } from 'lucide-react';
-import { UserPreferences, Bandeira, FuelType } from '../types';
+import { UserPreferences, Bandeira, FuelType} from '../types';
 import { Button } from './Button';
+import { ApiService } from '../services/apiService';
 
 interface MenuDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   onLogout: () => void;
-  userId: string;
+  token: string;
+  userID : bigint;
   userEmail: string;
+  userName: string;
+  userLogin: string;
   preferences: UserPreferences;
   onUpdatePreferences: (prefs: UserPreferences) => void;
 }
 
 export const MenuDrawer: React.FC<MenuDrawerProps> = ({ 
-  isOpen, onClose, onLogout, userEmail, preferences, onUpdatePreferences 
+  isOpen, onClose, onLogout, token, userID, userLogin, userName, userEmail, preferences, onUpdatePreferences 
 }) => {
   const [activeTab, setActiveTab] = useState<'settings' | 'profile'>('settings');
-  const [profileForm, setProfileForm] = useState({ email: userEmail, password: '' });
+  const [profileForm, setProfileForm] = useState({ token: token, ID: userID, Usuario: userLogin, Nome: userName, email: userEmail, password: '' });
   const [loading, setLoading] = useState(false);
-  const [message] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
 
   if (!isOpen) {
     return null;
@@ -27,12 +31,32 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
   
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!profileForm.password) {
-      console.log('Senha vazia, retornando');
+      setMessage('Informe uma nova senha para salvar.');
       return;
     }
-    
-    setLoading(true);
+
+    try {
+      setLoading(true);
+
+      //const token = localStorage.getItem('token') || '';
+
+      await ApiService.updateProfile(token, userID, {
+        nome: profileForm.Nome,
+        usuario: profileForm.Usuario,
+        email: profileForm.email,
+        senha: profileForm.password
+      });
+
+      setMessage('Senha atualizada com sucesso!');
+      setProfileForm({ ...profileForm, password: '' });
+
+    } catch (err: any) {
+      setMessage(err.message || 'Erro ao atualizar usuário');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -62,10 +86,10 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
           </div>
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-xl font-bold border border-white/30">
-              {userEmail && userEmail.length > 0 ? userEmail.charAt(0).toUpperCase() : '?'}
+              {userName && userName.length > 0 ? userName.charAt(0).toUpperCase() : '?'}
             </div>
             <div className="overflow-hidden">
-              <p className="font-medium truncate text-sm">{userEmail || 'Usuário'}</p>
+              <p className="font-medium truncate text-sm">{userName || 'Usuário'}</p>
               <p className="text-[10px] text-blue-200 uppercase tracking-widest font-bold">Conta Ativa</p>
             </div>
           </div>
@@ -163,6 +187,25 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
                   </div>
                 )}
                 <div>
+                  <label className="block text-xs font-bold text-gray-500 mb-1">Usuário</label>
+                  <input 
+                    type="usuario" 
+                    value={profileForm.Usuario}
+                    readOnly
+                    className="w-full px-4 py-2 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 mb-1">Nome</label>
+                  <input 
+                    type="nome" 
+                    value={profileForm.Nome}
+                    onChange={(e) => setProfileForm({ ...profileForm, Nome: e.target.value })}
+                    className="w-full px-4 py-2 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                    required
+                  />
+                </div>
+                <div>
                   <label className="block text-xs font-bold text-gray-500 mb-1">Email Cadastrado</label>
                   <input 
                     type="email" 
@@ -179,7 +222,7 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
                     value={profileForm.password}
                     onChange={(e) => setProfileForm({ ...profileForm, password: e.target.value })}
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
-                    placeholder="Deixe em branco para manter"
+                    placeholder="Senha é obrigatória para salvar"
                   />
                 </div>
                 <Button type="submit" isLoading={loading} className="text-sm">

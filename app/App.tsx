@@ -57,8 +57,11 @@ function App() {
             isOpen={isMenuOpen}
             onClose={() => setIsMenuOpen(false)}
             onLogout={handleLogout}
-            userId={user.id}
+            token={user.token}
+            userID={user.userID}
             userEmail={user.email}
+            userName={user.userName}
+            userLogin={user.userLogin}
             preferences={preferences}
             onUpdatePreferences={setPreferences}
           />

@@ -4,8 +4,8 @@ import { GasStation, User } from '../types';
 // CONFIGURAÇÃO DAS APIs
 // ==============================================================================
 
-const API_URL_LOGIN = 'https://findfuelapi.onrender.com/login';
-const API_URL_APP   = 'https://findfuelapi.onrender.com/findFuel';
+const API_URL_LOGIN = 'https://findfuelapi.onrender.com';
+const API_URL_APP   = 'https://findfuelapi.onrender.com';
 
 // ==============================================================================
 // TIPOS AUXILIARES
@@ -14,6 +14,12 @@ const API_URL_APP   = 'https://findfuelapi.onrender.com/findFuel';
 interface LoginResponse {
   access_token: string;
   token_type: string;
+  user: {
+    id: bigint;
+    usuario: string;
+    nome: string;
+    email: string;
+  };
 }
 
 // ==============================================================================
@@ -32,7 +38,7 @@ export const ApiService = {
     body.append('username', emailOrUsername); // Aqui passamos o que foi digitado (e-mail ou user)
     body.append('password', password);
 
-    const response = await fetch(`${API_URL_LOGIN}/token`, {
+    const response = await fetch(`${API_URL_LOGIN}/login/auth/login`, {
       method: 'POST',
       headers: {
         // CORREÇÃO: O header deve condizer com o corpo enviado
@@ -49,8 +55,9 @@ export const ApiService = {
 
     const data: LoginResponse = await response.json();
     const token = data.access_token;
+    const usuario = data.user;
 
-    console.log('[ApiService] Token recebido:', token);
+    //console.log('[ApiService] Token recebido:', token);
 
     if (!token) {
       console.error('[ApiService] Erro: Token não encontrado na resposta do servidor!');
@@ -58,10 +65,12 @@ export const ApiService = {
     }
 
     return {
-      id: emailOrUsername, // Ou extraia o ID do token/backend se disponível
-      email: emailOrUsername,
-      token: token
-    };
+      token: token,
+      userID: usuario.id, // Ou extraia o ID do token/backend se disponível
+      userLogin : usuario.usuario,
+      userName : usuario.nome,
+      email: usuario.email
+      };
   },
 
   // ---------------------------------------------------------------------------
@@ -74,7 +83,7 @@ export const ApiService = {
     raioKm = 5.0
   ): Promise<GasStation[]> => {
   try {
-    const url = new URL(`${API_URL_APP}/fuelPrices`);
+    const url = new URL(`${API_URL_APP}/findFuel/fuel/prices`);
 
     console.log(`[ApiService] Chamando: ${url} Lat: ${latitude.toString()} Lon: ${longitude.toString()} Raio: ${raioKm} km`);
 
@@ -82,7 +91,7 @@ export const ApiService = {
     url.searchParams.append('longitude', longitude.toString());
     url.searchParams.append('raio_km', raioKm.toString());
 
-    console.log('TOKEN:', token);
+    //console.log('TOKEN:', token);
 
     const response = await fetch(url.toString(), {
       method: 'GET',
@@ -98,7 +107,7 @@ export const ApiService = {
 
     const data = await response.json();
 
-    console.log(`[ApiService] Dados recebidos (${data.length} postos):`, data);
+    console.log(`[ApiService] Dados recebidos (${data.length} postos):`);
 
     return data.map((item: any) => ({
       id: `${item.id_revenda || Math.random()}-${item.produto}`,
@@ -134,7 +143,7 @@ export const ApiService = {
       senha: password
     };
 
-    const response = await fetch(`${API_URL_LOGIN}/usuarios/`, {
+    const response = await fetch(`${API_URL_LOGIN}/login/usuarios/`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -152,7 +161,40 @@ export const ApiService = {
     
     // Após registrar com sucesso, fazemos o login para obter o token real
     return ApiService.login(email, password);
+  },
+
+  // ---------------------------------------------------------------------------
+  // Atualiza perfil do usuário
+  // ---------------------------------------------------------------------------
+  updateProfile: async (
+    token: string,
+    userID: string,
+    data: {
+      nome: string;
+      usuario: string;
+      email: string;
+      senha: string;
+    },
+  ) => {
+    const response = await fetch(
+      `http://127.0.0.1:5000/login/usuarios/${userID}`,
+      {
+        method: "PUT",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(data)
+      }
+    );
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || "Erro ao atualizar usuário");
+    }
+
+    return response.json();
   }
-  
 };
 // ==============================================================================

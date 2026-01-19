@@ -58,9 +58,9 @@ export const MapScreen: React.FC<MapScreenProps> = ({
   const lastFetchPos = useRef<{ lat: number, lng: number } | null>(null);
 
   // LOG DE DEPURAÇÃO: Verificar se o token chegou no componente
-  useEffect(() => {
-    console.log('[MapScreen] Renderizado. Token recebido:', token ? `${token.substring(0, 10)}...` : 'VAZIO');
-  }, [token]);
+  //useEffect(() => {
+  //  console.log('[MapScreen] Renderizado. Token recebido:', token ? `${token.substring(0, 10)}...` : 'VAZIO');
+  //}, [token]);
 
   useEffect(() => {
     if (!navigator.geolocation) {
@@ -214,7 +214,7 @@ export const MapScreen: React.FC<MapScreenProps> = ({
                   </div>
                   
                   <div className="space-y-2 mb-4">
-                    <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Preços no Local</p>
+                    <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Preços sugeridos no Local</p>
                     <div className="grid grid-cols-1 gap-2">
                       {otherFuels.map(f => (
                         <div key={f.id} className={`flex justify-between items-center p-2 rounded-lg ${f.produto === station.produto ? 'bg-blue-50 border border-blue-100' : 'bg-gray-50'}`}>

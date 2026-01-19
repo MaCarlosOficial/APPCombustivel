@@ -55,7 +55,6 @@ export const MapScreen: React.FC<MapScreenProps> = ({
   const [allStations, setAllStations] = useState<GasStation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const lastFetchPos = useRef<{ lat: number, lng: number, raio: number } | null>(null);
 
   // LOG DE DEPURAÇÃO: Verificar se o token chegou no componente
   //useEffect(() => {

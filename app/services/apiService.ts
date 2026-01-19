@@ -91,7 +91,7 @@ export const ApiService = {
     url.searchParams.append('longitude', longitude.toString());
     url.searchParams.append('raio_km', raioKm.toString());
 
-    //console.log('TOKEN:', token);
+    console.log('TOKEN:', token);
 
     const response = await fetch(url.toString(), {
       method: 'GET',

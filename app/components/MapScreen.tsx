@@ -5,11 +5,11 @@ import { ApiService } from '../services/apiService';
 import { GasStation, Bandeira, UserPreferences } from '../types';
 import { Menu as MenuIcon, Star, Fuel, AlertCircle, Clock } from 'lucide-react';
 
-const MapController = ({ lat, lng }: { lat: number, lng: number }) => {
+const MapController = ({ lat, lng, raio }: { lat: number, lng: number, raio: number }) => {
   const map = useMap();
   useEffect(() => {
-    map.flyTo([lat, lng], map.getZoom());
-  }, [lat, lng, map]);
+    map.flyTo([lat, lng, raio], map.getZoom());
+  }, [lat, lng, raio, map]);
   return null;
 };
 
@@ -55,7 +55,7 @@ export const MapScreen: React.FC<MapScreenProps> = ({
   const [allStations, setAllStations] = useState<GasStation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const lastFetchPos = useRef<{ lat: number, lng: number } | null>(null);
+  const lastFetchPos = useRef<{ lat: number, lng: number, raio: number } | null>(null);
 
   // LOG DE DEPURAÇÃO: Verificar se o token chegou no componente
   //useEffect(() => {
@@ -74,14 +74,6 @@ export const MapScreen: React.FC<MapScreenProps> = ({
         const { latitude, longitude } = pos.coords;
         setPosition({ lat: latitude, lng: longitude });
         setLoading(false);
-
-        const shouldFetch = !lastFetchPos.current || 
-          calculateDistance(lastFetchPos.current.lat, lastFetchPos.current.lng, latitude, longitude) > 0.5;
-
-        if (shouldFetch) {
-          fetchStations(latitude, longitude);
-          lastFetchPos.current = { lat: latitude, lng: longitude };
-        }
       },
       () => {
         setError("GPS desativado. Ative para localizar postos.");
@@ -91,32 +83,48 @@ export const MapScreen: React.FC<MapScreenProps> = ({
     );
 
     return () => navigator.geolocation.clearWatch(watchId);
-  }, []);
+  } , []);
 
-  const fetchStations = async (lat: number, lng: number) => {
+  useEffect(() => {
+    if (!position || !token) return;
+
+    console.log(
+      '[MapScreen] Buscando postos | raio:',
+      preferences.searchRadiusKm
+    );
+
+    const timeout = setTimeout(() => {
+      fetchStations(
+        position.lat,
+        position.lng,
+        preferences.searchRadiusKm
+      );
+    }, 500);
+
+    return () => clearTimeout(timeout);
+
+  }, [
+    position?.lat,
+    position?.lng,
+    preferences.searchRadiusKm,
+    preferences.tipoCombustivel,
+    preferences.bandeiraFavorita,
+    preferences.showOnlyFavorites
+  ]);
+
+  const fetchStations = async (lat: number, lng: number, raio: number) => {
     if (!token) {
       return;
     }
 
     try {
       setError(null);
-      const data = await ApiService.getStationsNear(token, lat, lng, 5); 
+      const data = await ApiService.getStationsNear(token, lat, lng, raio); 
       setAllStations(data);
     } catch (e: any) {
       console.error(e);
       setError(e.message || "Erro ao carregar postos.");
     }
-  };
-
-  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
-    const R = 6371;
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-              Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    return R * c;
   };
 
   // 1. Filtrar os postos para exibição dos Marcadores baseados no tipo favorito
@@ -153,7 +161,7 @@ export const MapScreen: React.FC<MapScreenProps> = ({
         <MenuIcon size={24} />
       </button>
 
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[400] flex flex-col items-center gap-2 pointer-events-none">
+      <div className="absolute bottom-4 left-4 z-[400] flex flex-col items-start gap-2 pointer-events-none">
         <div className="bg-white/90 backdrop-blur px-4 py-2 rounded-full shadow-lg text-sm font-bold text-blue-600 flex items-center gap-2 border border-blue-100">
           <Fuel size={16} />
           {preferences.tipoCombustivel}
@@ -175,7 +183,7 @@ export const MapScreen: React.FC<MapScreenProps> = ({
         zoomControl={false}
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-        <MapController lat={position.lat} lng={position.lng} />
+        <MapController lat={position.lat} lng={position.lng} raio={preferences.searchRadiusKm} />
 
         <Marker position={[position.lat, position.lng]}>
           <Popup>Você está aqui</Popup>

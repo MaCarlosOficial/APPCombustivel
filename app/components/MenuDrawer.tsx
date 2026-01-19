@@ -143,6 +143,36 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
                   </div>
                 </div>
 
+                <div>
+                  <label className="flex items-center justify-between text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
+                    Raio de Pesquisa
+                    <span className="text-blue-600 font-bold">
+                      {preferences.searchRadiusKm} km
+                    </span>
+                  </label>
+
+                  <input
+                    type="range"
+                    min={1}
+                    max={50}
+                    step={1}
+                    value={preferences.searchRadiusKm}
+                    onChange={(e) =>
+                      onUpdatePreferences({
+                        ...preferences,
+                        searchRadiusKm: Number(e.target.value)
+                      })
+                    }
+                    className="w-full accent-blue-600"
+                  />
+
+                  <div className="flex justify-between text-[10px] text-gray-400 mt-1">
+                    <span>1 km</span>
+                    <span>50 km</span>
+                  </div>
+                </div>
+
+
                 <div className="bg-yellow-50 p-4 rounded-xl border border-yellow-100">
                   <label className="flex items-center justify-between cursor-pointer">
                     <div className="flex items-center gap-3">

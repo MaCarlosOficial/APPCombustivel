@@ -12,7 +12,8 @@ function App() {
   const [preferences, setPreferences] = useState<UserPreferences>({
     bandeiraFavorita: 'TODAS',
     tipoCombustivel: FuelType.GASOLINA,
-    showOnlyFavorites: false
+    showOnlyFavorites: false,
+    searchRadiusKm: 5
   });
 
   const handleLoginSuccess = (loggedInUser: User) => {

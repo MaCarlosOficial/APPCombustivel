@@ -41,6 +41,7 @@ export interface UserPreferences {
   bandeiraFavorita: Bandeira | 'TODAS';
   tipoCombustivel: FuelType;
   showOnlyFavorites: boolean;
+  searchRadiusKm: number | 5;
 }
 
 export interface LocationState {

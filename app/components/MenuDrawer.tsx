@@ -21,7 +21,7 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
   isOpen, onClose, onLogout, token, userID, userLogin, userName, userEmail, preferences, onUpdatePreferences 
 }) => {
   const [activeTab, setActiveTab] = useState<'settings' | 'profile'>('settings');
-  const [profileForm, setProfileForm] = useState({ token: token, ID: userID, Usuario: userLogin, Nome: userName, email: userEmail, password: '' });
+  const [profileForm, setProfileForm] = useState({ token: token, ID: userID.toString(), Usuario: userLogin, Nome: userName, email: userEmail, password: '' });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -42,7 +42,7 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
 
       //const token = localStorage.getItem('token') || '';
 
-      await ApiService.updateProfile(token, userID, {
+      await ApiService.updateProfile(token, userID.toString(), {
         nome: profileForm.Nome,
         usuario: profileForm.Usuario,
         email: profileForm.email,
